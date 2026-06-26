@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="apple-touch-icon" href="/favicon-192.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TGDrive</title>
+    <script>
+      // Restore path redirected by 404.html
+      (function(){
+        var p = new URLSearchParams(window.location.search).get('p');
+        if (p) {
+          window.history.replaceState(null, '', p);
+        }
+      })();
+    </script>
+    <!-- Google AdSense: replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

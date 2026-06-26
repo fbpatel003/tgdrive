@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <script>
+    // GitHub Pages 404 SPA redirect trick
+    // Converts /tgdrive/drive/123 → /tgdrive/?p=/drive/123
+    // index.html then restores it
+    var repo = '/tgdrive';
+    var path = window.location.pathname.replace(repo, '') || '/';
+    var search = window.location.search;
+    var hash = window.location.hash;
+    window.location.replace(
+      repo + '/?p=' + encodeURIComponent(path + search + hash)
+    );
+  </script>
+</head>
+</html>
