@@ -25,7 +25,7 @@
 
 | Upload | Preview |
 |--------|---------|
-| <img width="1917" height="832" alt="image" src="https://github.com/user-attachments/assets/5dad6caa-c64b-4cd5-8243-da5f958fe02d" /> | <img width="1917" height="842" alt="image" src="https://github.com/user-attachments/assets/21827767-0409-4951-aaeb-b89931602bfd" /> |
+| <img width="1917" height="832" alt="image" src="https://github.com/user-attachments/assets/5dad6caa-c64b-4cd5-8243-da5f958fe02d" /> | <img width="1917" height="842" alt="image" src="https://github.com/user-attachments/assets/23dc5dcd-a8ef-413c-be4d-33fb111f105f" /> |
 
 ---
 
