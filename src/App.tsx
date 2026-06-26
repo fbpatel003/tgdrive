@@ -6,6 +6,11 @@ import DrivePage from "./pages/DrivePage";
 
 const qc = new QueryClient();
 
+// Must match Vite's base config.
+// import.meta.env.BASE_URL is "/" locally and "/tgdrive/" on GitHub Pages.
+// BrowserRouter.basename should NOT have a trailing slash.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -44,7 +49,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <QueryClientProvider client={qc}>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <AuthProvider>
           <AppRoutes />
         </AuthProvider>

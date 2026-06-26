@@ -3,14 +3,25 @@
 <head>
   <meta charset="utf-8"/>
   <script>
-    // GitHub Pages SPA redirect — works for any repo name
-    // Converts /repo-name/drive/123 → /repo-name/?p=/drive/123
-    var seg = window.location.pathname.split('/')[1];
-    var repo = seg ? '/' + seg : '';
-    var path = window.location.pathname.replace(repo, '') || '/';
-    window.location.replace(
-      repo + '/?p=' + encodeURIComponent(path + window.location.search + window.location.hash)
-    );
+    // GitHub Pages SPA 404 redirect.
+    // URL is e.g. https://fbpatel003.github.io/tgdrive/drive/123
+    // We want to redirect to  https://fbpatel003.github.io/tgdrive/?p=/drive/123
+    // so index.html can restore /tgdrive/drive/123 for React Router.
+    (function () {
+      var origin = window.location.origin;
+      var full = window.location.pathname; // e.g. /tgdrive/drive/123
+      var base = '/' + full.split('/')[1];  // e.g. /tgdrive
+
+      // Path after the base  e.g. /drive/123
+      var rest = full.slice(base.length) || '/';
+      var search = window.location.search;
+      var hash = window.location.hash;
+
+      // Redirect to base root with ?p= containing the rest
+      window.location.replace(
+        origin + base + '/?p=' + encodeURIComponent(rest + search + hash)
+      );
+    })();
   </script>
 </head>
 </html>
