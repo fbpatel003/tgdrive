@@ -3,8 +3,15 @@ import react from '@vitejs/plugin-react'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import path from 'path'
 
+// On GitHub Actions, GITHUB_REPOSITORY is "owner/repo-name"
+// We extract just the repo name for the base path e.g. "/tgdrive/"
+// Locally this is undefined so base stays "/"
+const repoName = process.env.GITHUB_REPOSITORY
+  ? `/${process.env.GITHUB_REPOSITORY.split('/')[1]}/`
+  : '/'
+
 export default defineConfig({
-  base: process.env.GITHUB_PAGES ? '/tgdrive/' : '/',
+  base: repoName,
   resolve: {
     alias: {
       os: path.resolve(__dirname, 'src/stubs/os.ts'),

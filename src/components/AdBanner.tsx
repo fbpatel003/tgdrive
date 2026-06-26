@@ -36,7 +36,7 @@ export default function AdBanner({ slot, format = "auto", className = "" }: Prop
         ref={ref}
         className="adsbygoogle"
         style={{ display: "block" }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"   // ← replace with your publisher ID
+        data-ad-client="ca-pub-8889180337134009"   // ← replace with your publisher ID
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive="true"

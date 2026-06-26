@@ -31,8 +31,6 @@ jobs:
       - run: npm ci
 
       - run: npm run build
-        env:
-          GITHUB_PAGES: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
