@@ -19,15 +19,13 @@
 
 ## 📸 Screenshots
 
-> _Add your screenshots here_
-
 | Login | Drive |
 |-------|-------|
 | <img width="1891" height="857" alt="image" src="https://github.com/user-attachments/assets/867ffd95-0bf2-4d53-8416-e60b01fce3a7" /> | <img width="1907" height="827" alt="image" src="https://github.com/user-attachments/assets/04a15f88-d927-4fb2-88e3-07d92447acd0" /> |
 
 | Upload | Preview |
 |--------|---------|
-| ![Upload]() | ![Preview]() |
+| <img width="1917" height="832" alt="image" src="https://github.com/user-attachments/assets/5dad6caa-c64b-4cd5-8243-da5f958fe02d" /> | <img width="1917" height="842" alt="image" src="https://github.com/user-attachments/assets/21827767-0409-4951-aaeb-b89931602bfd" /> |
 
 ---
 
