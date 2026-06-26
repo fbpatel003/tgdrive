@@ -2,28 +2,34 @@
 <html lang="en" data-theme="night">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg"/>
-    <link rel="apple-touch-icon" href="./favicon-192.png"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TGDrive</title>
     <script>
-      // Restore path from GitHub Pages 404.html redirect.
-      // 404.html stores the original path in ?p=
-      // We restore it preserving the base (/tgdrive) so React Router works.
+      // Restore path from GitHub Pages 404.html redirect
       (function () {
         var p = new URLSearchParams(window.location.search).get('p');
         if (p) {
-          // window.location.pathname at this point is e.g. /tgdrive/
-          // p is e.g. /drive or /drive/123
-          // We need to replaceState to /tgdrive/drive or /tgdrive/drive/123
           var base = window.location.pathname.replace(/\/$/, '');
-          var restored = base + p;
-          window.history.replaceState(null, '', restored);
+          window.history.replaceState(null, '', base + p);
         }
       })();
     </script>
-    <!-- Google AdSense: replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID -->
+    <!-- AdSense: loaded after base URL is known -->
+    <script>
+      (function() {
+        var base = document.querySelector('base') ? document.querySelector('base').href : '/';
+        // Favicons — injected via JS so they always resolve from the true root
+        var root = window.location.origin + '/' + window.location.pathname.split('/')[1];
+        function addLink(rel, type, href) {
+          var l = document.createElement('link');
+          l.rel = rel; if (type) l.type = type; l.href = href;
+          document.head.appendChild(l);
+        }
+        addLink('icon', 'image/x-icon', root + '/favicon.ico');
+        addLink('icon', 'image/svg+xml', root + '/favicon.svg');
+        addLink('apple-touch-icon', null, root + '/favicon-192.png');
+      })();
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8889180337134009" crossorigin="anonymous"></script>
   </head>
   <body>

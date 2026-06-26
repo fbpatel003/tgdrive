@@ -8,7 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import {
   HardDrive, KeyRound, Phone, ShieldCheck,
   ExternalLink, FolderOpen, Upload, Shield,
-  Code2, Globe, ChevronDown, ChevronUp, Lock, Zap
+  Code2, Globe, ChevronDown, ChevronUp, Lock, Zap, ShieldCheckIcon
 } from "lucide-react";
 
 type Step = "credentials" | "phone" | "otp";
@@ -155,7 +155,7 @@ export default function LoginPage() {
           <span className="badge badge-primary badge-outline badge-xs ml-1">Beta</span>
         </div>
         <div className="flex-none flex items-center gap-3 text-xs text-base-content/40">
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-base-content/70 transition-colors">
+          <a href="https://github.com/fbpatel003/tgdrive" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-base-content/70 transition-colors">
             <Code2 size={14} /> GitHub
           </a>
         </div>
@@ -168,7 +168,7 @@ export default function LoginPage() {
           {/* Left — info side */}
           <div className="flex-1 min-w-0">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-3 py-1 rounded-full mb-5">
-              <Zap size={12} /> Free · Unlimited · No server
+              <Zap size={12} /> Free · Unlimited · Secure <ShieldCheckIcon size={12}/>
             </div>
             <h1 className="text-4xl font-bold text-base-content leading-tight mb-4">
               Your Telegram account<br />
@@ -246,7 +246,7 @@ export default function LoginPage() {
                     </div>
                     <label className="form-control">
                       <div className="label"><span className="label-text">API ID</span></div>
-                      <input type="number" className="input input-bordered" placeholder="12345678"
+                      <input type="numeric" className="input input-bordered" placeholder="12345678"
                         value={apiId} onChange={(e) => setApiId(e.target.value)} />
                     </label>
                     <label className="form-control">
