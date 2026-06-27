@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Download, Loader2, AlertTriangle } from "lucide-react";
 import { previewFile } from "../lib/drive";
-import { streamVideoToMediaSource } from "../lib/streamVideo";
+import { streamVideo } from "../lib/streamVideo";
 import type { CachedFile } from "../lib/db";
 
 interface Props {
@@ -14,53 +14,56 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [streamStatus, setStreamStatus] = useState("");
+  const [progress, setProgress] = useState(0);
 
-  const stopRef = useRef<(() => void) | null>(null);
-  const urlRef = useRef<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const prevUrlsRef = useRef<string[]>([]);
 
   const isImage = file.mimeType.startsWith("image/");
   const isVideo = file.mimeType.startsWith("video/");
 
   useEffect(() => {
-    let cancelled = false;
+    const abort = new AbortController();
+    abortRef.current = abort;
 
     async function load() {
       setLoading(true);
       setError("");
-      setStreamStatus("");
+      setProgress(0);
 
       try {
         if (isImage) {
-          // Images: full download into blob URL (images are small enough)
           const blobUrl = await previewFile(file);
-          if (!cancelled) {
-            urlRef.current = blobUrl;
+          if (!abort.signal.aborted) {
             setUrl(blobUrl);
+            prevUrlsRef.current.push(blobUrl);
             setLoading(false);
           } else {
             URL.revokeObjectURL(blobUrl);
           }
         } else if (isVideo) {
-          // Videos: MediaSource streaming — starts playing after first chunk
-          setStreamStatus("Connecting to Telegram…");
-          const { url: streamUrl, stop } = await streamVideoToMediaSource(
+          await streamVideo(
             file,
-            (msg) => { if (!cancelled) setError(msg); }
+            (pct) => {
+              if (!abort.signal.aborted) {
+                setProgress(pct);
+                if (pct > 0.01) setLoading(false);
+              }
+            },
+            (newUrl) => {
+              if (!abort.signal.aborted) {
+                setUrl(newUrl);
+                prevUrlsRef.current.push(newUrl);
+                setLoading(false);
+              } else {
+                URL.revokeObjectURL(newUrl);
+              }
+            },
+            abort.signal
           );
-          if (!cancelled) {
-            stopRef.current = stop;
-            urlRef.current = streamUrl;
-            setUrl(streamUrl);
-            setLoading(false);
-            setStreamStatus("Streaming…");
-          } else {
-            stop();
-            URL.revokeObjectURL(streamUrl);
-          }
         }
       } catch (e: unknown) {
-        if (!cancelled) {
+        if (!abort.signal.aborted) {
           setError(e instanceof Error ? e.message : "Preview failed");
           setLoading(false);
         }
@@ -70,13 +73,14 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
     load();
 
     return () => {
-      cancelled = true;
-      // Stop streaming
-      if (stopRef.current) { stopRef.current(); stopRef.current = null; }
-      // Revoke blob URL
-      if (urlRef.current) { URL.revokeObjectURL(urlRef.current); urlRef.current = null; }
+      abort.abort();
+      // Revoke all blob URLs created during this session
+      prevUrlsRef.current.forEach(URL.revokeObjectURL);
+      prevUrlsRef.current = [];
     };
   }, [file]);
+
+  const pct = Math.round(progress * 100);
 
   return (
     <dialog className="modal modal-open">
@@ -86,10 +90,13 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
         <div className="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300">
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-sm font-medium truncate">{file.name}</span>
-            {isVideo && url && !error && (
-              <span className="badge badge-success badge-xs gap-1 flex-shrink-0">
-                ● {streamStatus}
+            {isVideo && !loading && progress < 1 && (
+              <span className="badge badge-info badge-xs flex-shrink-0">
+                {pct}% buffered
               </span>
+            )}
+            {isVideo && progress >= 1 && (
+              <span className="badge badge-success badge-xs flex-shrink-0">fully loaded</span>
             )}
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -105,15 +112,25 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
         {/* Body */}
         <div className="flex items-center justify-center min-h-64 max-h-[80vh] bg-black/50 relative">
 
-          {/* Loading state */}
           {loading && !error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-base-content/50">
               <Loader2 size={28} className="animate-spin text-primary" />
-              <span className="text-sm">{streamStatus || "Loading…"}</span>
+              <span className="text-sm">
+                {isVideo ? "Buffering…" : "Loading…"}
+              </span>
             </div>
           )}
 
-          {/* Error state */}
+          {/* Video progress bar overlay while loading */}
+          {isVideo && progress > 0 && progress < 1 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-base-300/50">
+              <div
+                className="h-full bg-primary transition-all duration-300"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          )}
+
           {error && (
             <div className="py-16 px-8 text-center flex flex-col items-center gap-3">
               <AlertTriangle size={28} className="text-warning" />
@@ -124,17 +141,10 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
             </div>
           )}
 
-          {/* Image */}
           {url && isImage && (
-            <img
-              src={url}
-              alt={file.name}
-              className="max-w-full max-h-[80vh] object-contain"
-            />
+            <img src={url} alt={file.name} className="max-w-full max-h-[80vh] object-contain" />
           )}
 
-          {/* Video — src set as soon as MediaSource URL is ready,
-              video starts buffering immediately, plays once enough data in */}
           {url && isVideo && (
             <video
               key={url}
@@ -142,8 +152,7 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
               controls
               autoPlay
               className="max-w-full max-h-[80vh] w-full"
-              onCanPlay={() => setStreamStatus("Streaming…")}
-              onError={() => setError("Video playback error. Try downloading instead.")}
+              onError={() => setError("Playback error. Try downloading instead.")}
             />
           )}
         </div>
