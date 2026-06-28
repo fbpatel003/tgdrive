@@ -15,9 +15,12 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [canPlay, setCanPlay] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
-  const prevUrlsRef = useRef<string[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const pendingFinalUrl = useRef<string | null>(null);
+  const blobUrls = useRef<string[]>([]);
 
   const isImage = file.mimeType.startsWith("image/");
   const isVideo = file.mimeType.startsWith("video/");
@@ -30,33 +33,38 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
       setLoading(true);
       setError("");
       setProgress(0);
+      setCanPlay(false);
 
       try {
         if (isImage) {
           const blobUrl = await previewFile(file);
-          if (!abort.signal.aborted) {
-            setUrl(blobUrl);
-            prevUrlsRef.current.push(blobUrl);
-            setLoading(false);
-          } else {
-            URL.revokeObjectURL(blobUrl);
-          }
+          if (abort.signal.aborted) { URL.revokeObjectURL(blobUrl); return; }
+          blobUrls.current.push(blobUrl);
+          setUrl(blobUrl);
+          setLoading(false);
+
         } else if (isVideo) {
           await streamVideo(
             file,
-            (pct) => {
-              if (!abort.signal.aborted) {
-                setProgress(pct);
-                if (pct > 0.01) setLoading(false);
-              }
-            },
-            (newUrl) => {
-              if (!abort.signal.aborted) {
+            (pct) => { if (!abort.signal.aborted) setProgress(pct); },
+            (newUrl, isFinal) => {
+              if (abort.signal.aborted) { URL.revokeObjectURL(newUrl); return; }
+              blobUrls.current.push(newUrl);
+
+              if (!isFinal) {
+                // Early partial blob — set as src and start playing
                 setUrl(newUrl);
-                prevUrlsRef.current.push(newUrl);
                 setLoading(false);
               } else {
-                URL.revokeObjectURL(newUrl);
+                // Final complete blob — swap src only if safe (no restart risk)
+                const video = videoRef.current;
+                if (!video || video.currentTime < 1) {
+                  // Video hasn't really started — safe to swap immediately
+                  setUrl(newUrl);
+                } else {
+                  // Store it; swap when user pauses or seeks to start
+                  pendingFinalUrl.current = newUrl;
+                }
               }
             },
             abort.signal
@@ -74,11 +82,27 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
 
     return () => {
       abort.abort();
-      // Revoke all blob URLs created during this session
-      prevUrlsRef.current.forEach(URL.revokeObjectURL);
-      prevUrlsRef.current = [];
+      blobUrls.current.forEach(URL.revokeObjectURL);
+      blobUrls.current = [];
+      pendingFinalUrl.current = null;
     };
   }, [file]);
+
+  // Swap to final blob when video pauses (no restart since paused)
+  const handlePause = () => {
+    if (pendingFinalUrl.current && videoRef.current) {
+      const t = videoRef.current.currentTime;
+      setUrl(pendingFinalUrl.current);
+      pendingFinalUrl.current = null;
+      // Restore playback position after src swap
+      requestAnimationFrame(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = t;
+          videoRef.current.play().catch(() => {});
+        }
+      });
+    }
+  };
 
   const pct = Math.round(progress * 100);
 
@@ -90,10 +114,8 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
         <div className="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300">
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-sm font-medium truncate">{file.name}</span>
-            {isVideo && !loading && progress < 1 && (
-              <span className="badge badge-info badge-xs flex-shrink-0">
-                {pct}% buffered
-              </span>
+            {isVideo && canPlay && progress < 1 && (
+              <span className="badge badge-info badge-xs flex-shrink-0">{pct}% downloaded</span>
             )}
             {isVideo && progress >= 1 && (
               <span className="badge badge-success badge-xs flex-shrink-0">fully loaded</span>
@@ -113,21 +135,15 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
         <div className="flex items-center justify-center min-h-64 max-h-[80vh] bg-black/50 relative">
 
           {loading && !error && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-base-content/50">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-base-content/50 z-10">
               <Loader2 size={28} className="animate-spin text-primary" />
-              <span className="text-sm">
-                {isVideo ? "Buffering…" : "Loading…"}
-              </span>
+              <span className="text-sm">{isVideo ? "Buffering…" : "Loading…"}</span>
             </div>
           )}
 
-          {/* Video progress bar overlay while loading */}
           {isVideo && progress > 0 && progress < 1 && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-base-300/50">
-              <div
-                className="h-full bg-primary transition-all duration-300"
-                style={{ width: `${pct}%` }}
-              />
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-base-300/50 z-10">
+              <div className="h-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
             </div>
           )}
 
@@ -147,12 +163,15 @@ export default function PreviewModal({ file, onClose, onDownload }: Props) {
 
           {url && isVideo && (
             <video
+              ref={videoRef}
               key={url}
               src={url}
               controls
               autoPlay
               className="max-w-full max-h-[80vh] w-full"
-              onError={() => setError("Playback error. Try downloading instead.")}
+              onCanPlay={() => { setLoading(false); setCanPlay(true); }}
+              onPause={handlePause}
+              onError={() => { setError("Playback error. Try downloading instead."); setLoading(false); }}
             />
           )}
         </div>
