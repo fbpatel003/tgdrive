@@ -3,12 +3,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import LoginPage from "./pages/LoginPage";
 import DrivePage from "./pages/DrivePage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import AboutPage from "./pages/AboutPage";
+import CookieBanner from "./components/CookieBanner";
 
 const qc = new QueryClient();
 
-// Must match Vite's base config.
-// import.meta.env.BASE_URL is "/" locally and "/tgdrive/" on GitHub Pages.
-// BrowserRouter.basename should NOT have a trailing slash.
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -29,18 +30,12 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route
-        path="/login"
-        element={isAuthenticated ? <Navigate to="/drive" replace /> : <LoginPage />}
-      />
-      <Route
-        path="/drive"
-        element={<ProtectedRoute><DrivePage /></ProtectedRoute>}
-      />
-      <Route
-        path="/drive/:folderId"
-        element={<ProtectedRoute><DrivePage /></ProtectedRoute>}
-      />
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/drive" replace /> : <LoginPage />} />
+      <Route path="/drive" element={<ProtectedRoute><DrivePage /></ProtectedRoute>} />
+      <Route path="/drive/:folderId" element={<ProtectedRoute><DrivePage /></ProtectedRoute>} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="*" element={<Navigate to="/drive" replace />} />
     </Routes>
   );
@@ -52,6 +47,7 @@ export default function App() {
       <BrowserRouter basename={basename}>
         <AuthProvider>
           <AppRoutes />
+          <CookieBanner />
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
