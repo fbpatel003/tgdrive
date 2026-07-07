@@ -122,7 +122,7 @@ export default function DrivePage() {
   const canPreview = (f: CachedFile) => f.mimeType.startsWith("image/") || f.mimeType.startsWith("video/");
 
   return (
-    <div className="min-h-screen bg-base-100 flex flex-col">
+    <div className="bg-base-100 flex flex-col" style={{height:'100vh'}}>
       <Navbar />
 
       <AdBanner slot="9995104193" format="horizontal" className="max-w-5xl w-full mx-auto px-4 pt-3" />
