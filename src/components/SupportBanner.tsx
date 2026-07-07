@@ -4,7 +4,7 @@ const SMART_LINK = "https://www.effectivecpmnetwork.com/me98w02a?key=c5d9a533cb6
 
 export default function SupportBanner() {
   return (
-    <div className="border-t border-base-300 bg-base-200/60 mt-auto">
+    <div className="border-t border-base-300 bg-base-200 mt-auto sticky bottom-0 z-40">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2 text-xs text-base-content/40">
           <Heart size={13} className="text-error/60" />
