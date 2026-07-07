@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { HardDrive, ArrowLeft, Shield, Zap, FolderOpen, Code2, Lock, Server, Wifi } from "lucide-react";
+import AdsterraBanner from "../components/AdsterraBanner";
 
 export default function AboutPage() {
   const navigate = useNavigate();
@@ -201,6 +202,8 @@ export default function AboutPage() {
         </section>
 
       </div>
+
+      <AdsterraBanner className="border-t border-base-300" />
 
       <div className="border-t border-base-300 bg-base-200">
         <div className="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-base-content/30">
