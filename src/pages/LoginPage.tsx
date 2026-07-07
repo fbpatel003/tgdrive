@@ -5,6 +5,7 @@ import { StringSession } from "telegram/sessions";
 import { PromisedWebSockets } from "telegram/extensions/PromisedWebSockets";
 import { db } from "../lib/db";
 import { useAuth } from "../hooks/useAuth";
+import AdsterraBanner from "../components/AdsterraBanner";
 import {
   HardDrive, KeyRound, Phone, ShieldCheck,
   ExternalLink, FolderOpen, Upload, Shield,
@@ -351,6 +352,9 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Adsterra Native Banner */}
+      <AdsterraBanner className="border-t border-base-300" />
 
       {/* ── Footer ── */}
       <div className="border-t border-base-300 bg-base-200">

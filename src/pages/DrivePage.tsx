@@ -10,6 +10,7 @@ import UploadModal from "../components/UploadModal";
 import NewFolderModal from "../components/NewFolderModal";
 import PreviewModal from "../components/PreviewModal";
 import AdBanner from "../components/AdBanner";
+import SupportBanner from "../components/SupportBanner";
 import {
   getFolders, getFiles, downloadFile, deleteFile,
   deleteFolder, formatSize, getThumbnail
@@ -354,6 +355,7 @@ export default function DrivePage() {
           onDownload={() => { downloadFile(previewingFile); setPreviewingFile(null); }}
         />
       )}
+      <SupportBanner />
     </div>
   );
 }
