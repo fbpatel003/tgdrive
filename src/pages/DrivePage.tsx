@@ -127,7 +127,7 @@ export default function DrivePage() {
 
       <AdBanner slot="9995104193" format="horizontal" className="max-w-5xl w-full mx-auto px-4 pt-3" />
 
-      <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+      <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 pb-16">
 
         {/* Breadcrumb + Actions */}
         <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
