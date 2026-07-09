@@ -364,11 +364,11 @@ export default function LoginPage() {
             <span>TGDrive — built by <span className="text-base-content/50 font-medium">Fenil</span> · {new Date().getFullYear()}</span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/about" className="hover:text-base-content/60 transition-colors">About</a>
+            <a onClick={()=>navigate("/about")} className="hover:text-base-content/60 transition-colors">About</a>
             <span>·</span>
-            <a href="/privacy" className="hover:text-base-content/60 transition-colors">Privacy Policy</a>
+            <a onClick={()=>navigate("/privacy")} className="hover:text-base-content/60 transition-colors">Privacy Policy</a>
             <span>·</span>
-            <a href="/terms" className="hover:text-base-content/60 transition-colors">Terms of Service</a>
+            <a onClick={()=>navigate("/terms")} className="hover:text-base-content/60 transition-colors">Terms of Service</a>
             <span>·</span>
             <a href="https://my.telegram.org" target="_blank" rel="noreferrer" className="hover:text-base-content/60 transition-colors flex items-center gap-1">
               Telegram API <ExternalLink size={10} />
