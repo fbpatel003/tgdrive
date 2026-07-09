@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Cookie } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const COOKIE_KEY = "tgdrive_cookie_consent";
 
 export default function CookieBanner() {
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function CookieBanner() {
           <p className="text-xs text-base-content/60 leading-relaxed">
             TGDrive uses cookies from Google AdSense to serve relevant ads.
             No personal data is collected by TGDrive itself.{" "}
-            <a href="/privacy" className="link link-primary">Learn more</a>
+            <a onClick={()=>navigate('/privacy')} className="link link-primary">Learn more</a>
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
