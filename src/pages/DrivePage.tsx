@@ -46,7 +46,7 @@ function ThumbCell({ file, onPreview }: { file: CachedFile; onPreview: () => voi
   return (
     <div
       ref={ref}
-      className="w-12 h-12 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center flex-shrink-0 cursor-pointer group-hover:ring-2 ring-primary/30 transition-all"
+      className="w-14 h-14 rounded-lg overflow-hidden bg-base-300 flex items-center justify-center flex-shrink-0 cursor-pointer group-hover:ring-2 ring-primary/30 transition-all"
       onClick={file.mimeType.startsWith("image/") || file.mimeType.startsWith("video/") ? onPreview : undefined}
     >
       {thumb
