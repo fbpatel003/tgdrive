@@ -156,7 +156,7 @@ export default function LoginPage() {
           <span className="badge badge-primary badge-outline badge-xs ml-1">Beta</span>
         </div>
         <div className="flex-none flex items-center gap-3 text-xs text-base-content/40">
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-base-content/70 transition-colors">
+          <a href="https://github.com/fbpatel003/tgdrive" target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-base-content/70 transition-colors">
             <Code2 size={14} /> GitHub
           </a>
         </div>
