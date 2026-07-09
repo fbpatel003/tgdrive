@@ -125,7 +125,7 @@ export default function DrivePage() {
     <div className="bg-base-100 flex flex-col" style={{height:'100vh'}}>
       <Navbar />
 
-      <AdsterraBanner className="max-w-5xl w-full mx-auto px-4 pt-3" />
+      <AdsterraBanner className="w-full py-2 border-b border-base-300 bg-base-200/50" />
 
       <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
 
