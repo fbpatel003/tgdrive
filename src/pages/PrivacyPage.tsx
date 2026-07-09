@@ -86,25 +86,25 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-base-content mb-3">5. Google AdSense and Cookies</h2>
+            <h2 className="text-lg font-semibold text-base-content mb-3">5. Adsterra Advertising and Cookies</h2>
             <p>
-              TGDrive displays advertisements served by Google AdSense. Google AdSense uses cookies
+              TGDrive displays advertisements served by Adsterra Network. Adsterra uses cookies
               and similar tracking technologies to serve personalised advertisements based on your
-              visits to this and other websites. Google's use of advertising cookies enables it and
-              its partners to serve ads based on your visit to our site and other sites on the internet.
+              browsing activity and interests. These cookies help Adsterra and its partners deliver
+              relevant ads across websites.
             </p>
             <p className="mt-2">
               You may opt out of personalised advertising by visiting{" "}
-              <a href="https://www.google.com/settings/ads" target="_blank" rel="noreferrer"
-              className="link link-primary">Google Ads Settings</a> or{" "}
-              <a href="http://www.aboutads.info/choices/" target="_blank" rel="noreferrer"
-              className="link link-primary">www.aboutads.info</a>.
+              <a href="https://www.aboutads.info/choices/" target="_blank" rel="noreferrer"
+              className="link link-primary">www.aboutads.info</a> or{" "}
+              <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noreferrer"
+              className="link link-primary">www.youronlinechoices.eu</a>.
             </p>
             <p className="mt-2">
-              For more information on how Google uses data when you use our site, see:{" "}
-              <a href="https://policies.google.com/technologies/partner-sites" target="_blank"
+              For more information on how Adsterra handles data, see:{" "}
+              <a href="https://adsterra.com/privacy-policy/" target="_blank"
               rel="noreferrer" className="link link-primary">
-                How Google uses data when you use our partners' sites or apps
+                Adsterra Privacy Policy
               </a>.
             </p>
           </section>
