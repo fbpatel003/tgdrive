@@ -164,10 +164,9 @@ export async function getFiles(folderId: string): Promise<CachedFile[]> {
 // ─── Thumbnail ────────────────────────────────────────────────────────────────
 
 export async function getThumbnail(file: CachedFile): Promise<string | null> {
-  // Only for images
   if (!file.mimeType.startsWith("image/")) return null;
 
-  // Check cache
+  // Return from cache if available
   const cached = await db.thumbs.get(file.id);
   if (cached) return cached.dataUrl;
 
@@ -181,16 +180,40 @@ export async function getThumbnail(file: CachedFile): Promise<string | null> {
   if (!msg?.media) return null;
 
   try {
-    // Download thumb index 0 (smallest available thumbnail)
-    const data = await client.downloadMedia(msg.media, { thumb: 0 } as Parameters<typeof client.downloadMedia>[1]);
+    // Pick the largest available thumbnail by pixel area
+    let bestThumbIndex = 0;
+    if (msg.media instanceof Api.MessageMediaDocument) {
+      const doc = msg.media.document;
+      if (doc instanceof Api.Document && doc.thumbs && doc.thumbs.length > 0) {
+        let bestArea = 0;
+        doc.thumbs.forEach((t, i) => {
+          const w = (t as Api.PhotoSize).w ?? 0;
+          const h = (t as Api.PhotoSize).h ?? 0;
+          if (w * h > bestArea) { bestArea = w * h; bestThumbIndex = i; }
+        });
+      }
+    }
+
+    const data = await client.downloadMedia(
+      msg.media,
+      { thumb: bestThumbIndex } as Parameters<typeof client.downloadMedia>[1]
+    );
     if (!data) return null;
 
-    const bytes = data as unknown as Uint8Array;
-    const b64 = btoa(Array.from(bytes).map(b => String.fromCharCode(b)).join(""));
-    const dataUrl = `data:image/jpeg;base64,${b64}`;
+    // Convert to base64 safely using FileReader (avoids btoa call stack overflow)
+    const raw = data as unknown as { buffer: ArrayBuffer; byteOffset: number; byteLength: number };
+    const ab = raw.buffer
+      ? raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength)
+      : (data as unknown as ArrayBuffer);
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(new Blob([ab], { type: "image/jpeg" }));
+    });
 
     await db.thumbs.put({ id: file.id, dataUrl, savedAt: Date.now() });
-    // Prune cache asynchronously
     pruneThumbCache().catch(() => {});
     return dataUrl;
   } catch {
