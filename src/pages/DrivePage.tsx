@@ -10,6 +10,7 @@ import UploadModal from "../components/UploadModal";
 import NewFolderModal from "../components/NewFolderModal";
 import PreviewModal from "../components/PreviewModal";
 import AdsterraBanner from "../components/AdsterraBanner";
+import AdsterraNative from "../components/AdsterraNative";
 import SupportBanner from "../components/SupportBanner";
 import {
   getFolders, getFiles, downloadFile, deleteFile,
@@ -122,12 +123,16 @@ export default function DrivePage() {
   const canPreview = (f: CachedFile) => f.mimeType.startsWith("image/") || f.mimeType.startsWith("video/");
 
   return (
-    <div className="bg-base-100 flex flex-col" style={{height:'100vh'}}>
+    <div className="min-h-screen bg-base-100 flex flex-col">
       <Navbar />
 
       <AdsterraBanner className="w-full py-2 border-b border-base-300 bg-base-200/50" />
 
-      <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+      {/* Main layout: content + right sidebar on lg */}
+      <div className="flex-1 flex w-full max-w-7xl mx-auto">
+
+        {/* Content area */}
+        <div className="flex-1 min-w-0 px-4 py-6 pb-20">
 
         {/* Breadcrumb + Actions */}
         <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
@@ -341,6 +346,13 @@ export default function DrivePage() {
           )
         )}
       </div>
+
+        {/* Right sidebar — native banner, lg screens only */}
+        <aside className="hidden lg:flex flex-col items-center pt-6 pr-4 w-48 flex-shrink-0">
+          <AdsterraNative className="sticky top-6 w-full" />
+        </aside>
+
+      </div>{/* end outer flex */}
 
       {showUpload && folderId && (
         <UploadModal folderId={folderId} onDone={() => { setShowUpload(false); load(); }} onClose={() => setShowUpload(false)} />
