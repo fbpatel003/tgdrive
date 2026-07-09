@@ -1,36 +1,33 @@
 import { useEffect, useRef } from "react";
 
-let counter = 0;
-
 /**
- * Adsterra native banner — vertical sidebar variant.
- * Only renders on lg screens (hidden on smaller viewports via CSS).
+ * Adsterra native banner — sidebar variant for lg screens.
+ *
+ * Adsterra's invoke.js looks for the EXACT id
+ * "container-cd001782380aea119ddb40e7bd8deb20" in the DOM.
+ * We must render that id directly — no dynamic suffix.
+ * Only mount this component ONCE on the page.
  */
 export default function AdsterraNative({ className = "" }: { className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const id = useRef(`at-native-${++counter}`);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const loaded = useRef(false);
 
   useEffect(() => {
-    if (loaded.current || !ref.current) return;
+    if (loaded.current || !wrapRef.current) return;
     loaded.current = true;
-
-    const inner = document.createElement("div");
-    inner.id = `container-cd001782380aea119ddb40e7bd8deb20-${id.current}`;
-    ref.current.appendChild(inner);
 
     const script = document.createElement("script");
     script.async = true;
     script.setAttribute("data-cfasync", "false");
-    script.src = "https://pl30231840.effectivecpmnetwork.com/cd001782380aea119ddb40e7bd8deb20/invoke.js";
-    ref.current.appendChild(script);
+    script.src =
+      "https://pl30231840.effectivecpmnetwork.com/cd001782380aea119ddb40e7bd8deb20/invoke.js";
+    wrapRef.current.appendChild(script);
   }, []);
 
   return (
-    <div
-      ref={ref}
-      id={id.current}
-      className={`hidden lg:block ${className}`}
-    />
+    <div ref={wrapRef} className={className}>
+      {/* Adsterra looks for this exact id at script execution time */}
+      <div id="container-cd001782380aea119ddb40e7bd8deb20" />
+    </div>
   );
 }
