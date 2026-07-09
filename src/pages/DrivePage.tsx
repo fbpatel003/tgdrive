@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar";
 import UploadModal from "../components/UploadModal";
 import NewFolderModal from "../components/NewFolderModal";
 import PreviewModal from "../components/PreviewModal";
-import AdBanner from "../components/AdBanner";
+import AdsterraBanner from "../components/AdsterraBanner";
 import SupportBanner from "../components/SupportBanner";
 import {
   getFolders, getFiles, downloadFile, deleteFile,
@@ -125,9 +125,9 @@ export default function DrivePage() {
     <div className="bg-base-100 flex flex-col" style={{height:'100vh'}}>
       <Navbar />
 
-      <AdBanner slot="9995104193" format="horizontal" className="max-w-5xl w-full mx-auto px-4 pt-3" />
+      <AdsterraBanner className="max-w-5xl w-full mx-auto px-4 pt-3" />
 
-      <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 pb-16">
+      <div className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
 
         {/* Breadcrumb + Actions */}
         <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
